@@ -11,6 +11,7 @@ resource "aws_lb" "main" {
   }
 }
 
+/*
 resource "aws_lb_target_group" "main" {
   name        = "${var.name}-target"
   port        = var.port
@@ -39,3 +40,4 @@ resource "aws_lb_listener" "main" {
     Project = var.project
   }
 }
+*/

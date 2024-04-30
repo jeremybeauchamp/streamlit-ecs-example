@@ -1,8 +1,7 @@
-URL=$1
-LOCAL_IMAGE=$2
-REMOTE_IMAGE=$3
-REGION=$4
+LOCAL=$1
+REPO_URL=$2
+IMAGE_NAME=$3
 
-aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $URL
-docker tag $IMAGE $URL/$REMOTE_IMAGE:latest
-docker push $URL/$REMOTE_IMAGE:latest
+aws ecr get-login-password | docker login --username AWS --password-stdin $REPO_URL
+docker tag $LOCAL $REPO_URL/$IMAGE_NAME:latest
+docker push $REPO_URL/$IMAGE_NAME:latest

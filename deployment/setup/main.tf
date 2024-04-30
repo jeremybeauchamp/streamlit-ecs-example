@@ -6,10 +6,12 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.46.0"
     }
-    null = {
-      source  = "hashicorp/null"
-      version = "~> 3.2.2"
-    }
+  }
+
+  backend "s3" {
+    bucket = "jb-initial-test-tf-state"
+    key    = "setup.tfstate"
+    region = "us-east-2"
   }
 }
 
@@ -20,14 +22,14 @@ locals {
 
 # Creates the VPC used for the ECS cluster
 module "vpc" {
-  source = "./modules/vpc"
+  source = "../modules/vpc"
 
   project = local.project
 }
 
 # Creates the Load Balancer for the cluster
 module "load_balancer" {
-  source = "./modules/load_balancer"
+  source = "../modules/load_balancer"
 
   name    = "${local.project}-lb"
   project = local.project
@@ -40,17 +42,8 @@ module "load_balancer" {
 
 # Creates the ECS cluster
 module "cluster" {
-  source = "./modules/cluster"
+  source = "../modules/cluster"
 
   name    = "${local.project}-cluster"
   project = local.project
-}
-
-# Creates ECR repo for docker image
-module "container" {
-  source = "./modules/container"
-
-  name        = "${local.project}-image"
-  project     = local.project
-  local_image = "st-app:latest"
 }
