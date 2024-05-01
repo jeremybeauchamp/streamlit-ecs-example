@@ -1,6 +1,5 @@
 # Streamlit AWS ECS Deployment Example
 
 ## To Do:
-- Set up ELB target group
-- Set up ECS task definition + service
+- Figure out why ECS service fails to deploy
 - Set up Route53 record

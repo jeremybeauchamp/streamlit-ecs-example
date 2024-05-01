@@ -22,10 +22,28 @@ terraform {
 # Sets the local variables
 locals {
   project = "st-tf-test"
+  vpc_id = "vpc-006861bbc13a90884"
+  subnet_ids = [
+    "subnet-0498bb0d4805401ba",
+    "subnet-0893e2d8f8f4c2e24"
+  ]
 }
 
 variable "local_image" {
   type = string
+}
+
+# Pulls in data from the setup stage
+data "aws_ecs_cluster" "cluster" {
+  cluster_name = "${local.project}-cluster"
+}
+
+data "aws_lb" "alb" {
+  name = "${local.project}-lb"
+}
+
+data "aws_vpc" "vpc" {
+  id = local.vpc_id
 }
 
 # Creates ECR repo for docker image
@@ -35,4 +53,17 @@ module "container" {
   name        = "${local.project}-image"
   project     = local.project
   local_image = var.local_image
+}
+
+# Creates ECS Task definition
+module "task" {
+  source = "../modules/service"
+
+  name = "${local.project}-task"
+  project = local.project
+  image = "${module.container.repo_url}:latest"
+  cluster_id = data.aws_ecs_cluster.cluster.id
+  alb_arn = data.aws_lb.alb.arn
+  vpc_id = data.aws_vpc.vpc.id
+  subnet_ids = local.subnet_ids
 }
